@@ -47,27 +47,31 @@ io.on("connection", (socket) => {
     // Broadcast updated online users list to all clients
     io.emit("updateOnlineUsers", Array.from(onlineUsers.values()));
   });
+  // sender,
+  // recipient,
+  // message,
 
+  
   // Handle sending a message
-  socket.on("sendMessage", ({ senderId, receiverId, content }) => {
+  socket.on("sendMessage", ({ sender, recipient, message }) => {
     // Find the receiver's socketId from the onlineUsers map
     let receiverSocketId = null;
     for (let [socketId, user] of onlineUsers.entries()) {
-      if (user.userId === receiverId) {
+      if (user.userId === recipient) {
         receiverSocketId = socketId;
         break;
       }
     }
 
     if (receiverSocketId) {
-      console.log(`Sending message from ${senderId} to ${receiverId}: ${content}`);
+      console.log(`Sending message from ${sender} to ${recipient}: ${message}`);
       io.to(receiverSocketId).emit("receiveMessage", {
-        senderId,
-        receiverId,
-        content,
+        sender,
+        recipient,
+        message,
       });
     } else {
-      console.log(`Recipient with userId ${receiverId} is not online.`);
+      console.log(`Recipient with userId ${recipient} is not online.`);
     }
   });
 

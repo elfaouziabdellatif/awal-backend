@@ -10,7 +10,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 const {
   sendMessage,
   getMessages,
-  getUnreadMessagesCount
+  getUnreadMessagesCount,
+  markMessagesAsRead 
 } = require('../controllers/messageController');
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router.get('/users', authMiddleware, getUsers);
 router.post('/send', authMiddleware, sendMessage);
 router.get('/messages', authMiddleware, getMessages);
 router.get('/unreadMessages', authMiddleware, getUnreadMessagesCount);
+router.post("/messages/mark-as-read", markMessagesAsRead);
 
 module.exports = router;

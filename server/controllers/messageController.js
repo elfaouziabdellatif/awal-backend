@@ -75,8 +75,31 @@ const getUnreadMessagesCount = async (req, res) => {
   }
 };
 
+const markMessagesAsRead = async (req, res) => {
+  const { userId, selectedUserId } = req.body;
+
+  if (!userId || !selectedUserId) {
+    return res.status(400).json({ error: "User ID and Selected User ID are required." });
+  }
+
+  try {
+    // Update all messages where the recipient is the current user, 
+    // the sender is the selected user, and the messages are unread.
+    const result = await Message.updateMany(
+      { sender: selectedUserId, recipient: userId, read: false },
+      { $set: { read: true } }
+    );
+
+    res.status(200).json({ message: "Messages marked as read.", updatedCount: result.nModified });
+  } catch (error) {
+    console.error("Error marking messages as read:", error);
+    res.status(500).json({ error: "Failed to mark messages as read." });
+  }
+};
+
 module.exports = {
   sendMessage,
   getMessages,
   getUnreadMessagesCount,
+  markMessagesAsRead,
 };
